@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ORBIT</title>
+    <link rel="stylesheet" href="./style/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto+Slab:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+  </head>
+  <body>
+    <div id="tsparticles"></div>
+    <main class="hero">
+      <div class="logo">
+        <h1 class="title">ORBIT</h1>
+      </div>
+      <h2 class="tagline">
+        <span class="word1">Strengthen</span> your Network,
+        <span class="word2">Minimize</span> Interferences
+      </h2>
+      <div class="button-container">
+        <button id="start">Simulation</button>
+        <button id="theory">Theory</button>
+        <button id="about">About Team</button>
+      </div>
+    </main>
+    <section id="simulation-section">
+      <aside class="orbit-sidebar" id="configuration">
+        <div class="sidebar-header">
+          <h3>Topology Configuration</h3>
+          <p>2.4GHz frequency</p>
+        </div>
+        <div class="input-group">
+          <p class="infotext">
+            Click on empty area to add a router & drag node to position
+          </p>
+          <div class="coordinate">
+            <label>Last Position: </label>
+            <span id="coordInfo">X: 0, Y: 0</span>
+          </div>
+        </div>
+        <hr class="divider" />
+        <div class="router-list-container">
+          <h4>Router List (<span id="counter">0</span>)</h4>
+          <ul id="router-list"></ul>
+        </div>
+        <div class="control-actions">
+          <button id="calculate" class="action-btn run">
+            Calculate Channel
+          </button>
+          <button id="clear" class="action-btn clear">Reset Topology</button>
+        </div>
+      </aside>
+      <section id="visual-container"></section>
+    </section>
+  </body>
+  <script src="./js/script.js"></script>
+</html>
