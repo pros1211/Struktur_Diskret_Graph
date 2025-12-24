@@ -57,6 +57,29 @@
           <button id="clear" class="action-btn clear">Reset Topology</button>
         </div>
       </aside>
+      <div id="result-table">
+        <div class="table-header">
+          <h3>Optimization Results</h3>
+          <div class="header-controls">
+            <button onclick="toggleMinimize()" class="control-btn min-btn">
+              −
+            </button>
+            <button onclick="closeTable()" class="control-btn close-btn">
+              &times;
+            </button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Router</th>
+              <th>Channel</th>
+              <th>Interferences</th>
+            </tr>
+          </thead>
+          <tbody id="resultBody"></tbody>
+        </table>
+      </div>
       <section id="visual-container"></section>
     </section>
   </body>

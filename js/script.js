@@ -1,4 +1,3 @@
-/* --- SETUP CONFIG SCROLL --- */
 const startBtn = document.getElementById("start");
 const simSection = document.getElementById("simulation-section");
 
@@ -8,7 +7,6 @@ if (startBtn && simSection) {
   });
 }
 
-/* --- 1. CONFIG PARTICLES --- */
 tsParticles.load("tsparticles", {
   background: { color: { value: "#222831" } },
   fpsLimit: 60,
@@ -78,7 +76,7 @@ svg.on("click", function (event) {
   const [x, y] = d3.pointer(event);
   addNode(x, y);
 });
-
+// function for input
 function addNode(x, y) {
   const newNode = {
     id: nodeIdCounter++,
@@ -127,6 +125,7 @@ function ticked() {
   gNode.selectAll(".node").attr("transform", (d) => `translate(${d.x},${d.y})`);
 }
 
+// update graph
 function updateGraph() {
   // Update Links
   gLink
@@ -225,3 +224,182 @@ function updateList() {
     list.appendChild(li);
   });
 }
+const channelColors = {
+  1: "#FF0000", // Merah (Ch 1)
+  2: "#FF4500",
+  3: "#FF8C00",
+  4: "#FFA500",
+  5: "#FFD700",
+  6: "#00FF00", // Hijau (Ch 6)
+  7: "#00FA9A",
+  8: "#00CED1",
+  9: "#1E90FF",
+  10: "#0000FF",
+  11: "#8A2BE2", // ch 11
+};
+function getInterferenceWeight(ch1, ch2) {
+  if (!ch1 || !ch2) return 0;
+  const diff = Math.abs(ch1 - ch2);
+  // weight difference of distance of the channel
+  if (diff === 0) return 1.0; //very bad
+  if (diff === 1) return 0.8;
+  if (diff === 2) return 0.5;
+  if (diff === 3) return 0.2;
+  if (diff === 4) return 0.1;
+  return 0.0; // perfect
+}
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+// TSC-DSATUR algorithm for coloring
+async function runDSATUR() {
+  if (nodes.length === 0) {
+    alert("Please add Router First");
+    return;
+  }
+  const calcBtn = document.getElementById("calculate");
+  const originalText = calcBtn.innerText;
+  calcBtn.disabled = true;
+  calcBtn.innerText = "Processing...";
+  calcBtn.style.opacity = "0.7";
+  // initialize stat for every router
+  nodes.forEach((node) => {
+    // channel wifi null
+    node.channel = null;
+    // number of neighbor node colored
+    node.saturation = 0;
+    // number of neighbor
+    node.degree = 0;
+  });
+  links.forEach((link) => {
+    link.source.degree = (link.source.degree || 0) + 1;
+    link.target.degree = (link.target.degree || 0) + 1;
+  });
+  // filter every node that never colored
+  const uncolored = () => nodes.filter((n) => n.channel === null);
+  while (uncolored().length > 0) {
+    // select node with the biggest number of neighbor
+    let selectedNode = uncolored().sort((a, b) => {
+      if (b.saturation !== a.saturation) return b.saturation - a.saturation;
+      return b.degree - a.degree;
+    })[0];
+    // animation for each coloring
+    gNode
+      .selectAll("circle")
+      .filter((d) => d.id === selectedNode.id)
+      .attr("stroke", "#FFFF00")
+      .attr("stroke-width", 5)
+      .attr("r", 20);
+
+    await sleep(500);
+    // loop for channel 1 to 11
+    let bestChannel = 1;
+    let minInterference = Infinity;
+    for (let ch = 1; ch <= 11; ch++) {
+      let currentInterference = 0;
+      // list every neighbor for selected node
+      const neighbors = links
+        .filter(
+          (l) =>
+            l.source.id === selectedNode.id || l.target.id === selectedNode.id
+        )
+        .map((l) => (l.source.id === selectedNode.id ? l.target : l.source));
+      // calculate interference for each neighbor to selected node
+      neighbors.forEach((neighbor) => {
+        if (neighbor.channel !== null) {
+          currentInterference += getInterferenceWeight(ch, neighbor.channel);
+        }
+      });
+
+      if (currentInterference < minInterference) {
+        minInterference = currentInterference;
+        bestChannel = ch;
+      }
+    }
+    selectedNode.channel = bestChannel;
+    selectedNode.totalInterference = minInterference;
+    updateGraphColors();
+    await sleep(500);
+    // UPDATE SATURATION DEGREE for each neighbor
+    const neighbors = links
+      .filter(
+        (l) =>
+          l.source.id === selectedNode.id || l.target.id === selectedNode.id
+      )
+      .map((l) => (l.source.id === selectedNode.id ? l.target : l.source));
+
+    neighbors.forEach((neighbor) => {
+      // calculate unique number of neighbor colored
+      const neighborOfNeighbor = links
+        .filter(
+          (l) => l.source.id === neighbor.id || l.target.id === neighbor.id
+        )
+        .map((l) => (l.source.id === neighbor.id ? l.target : l.source));
+
+      const uniqueColors = new Set(
+        neighborOfNeighbor.map((n) => n.channel).filter((c) => c !== null)
+      );
+      neighbor.saturation = uniqueColors.size;
+    });
+  }
+  showResultModal();
+  calcBtn.disabled = false;
+  calcBtn.innerText = originalText;
+  calcBtn.style.opacity = "1";
+}
+// update color graph
+function updateGraphColors() {
+  gNode
+    .selectAll("circle")
+    .transition()
+    .duration(300)
+    .attr("fill", (d) => (d.channel ? channelColors[d.channel] : "#1F2833"))
+    .attr("r", 15)
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 2);
+}
+// function minimize table
+function toggleMinimize() {
+  const panel = document.getElementById("result-table");
+  const btn = document.querySelector(".min-btn");
+
+  // Toggle class CSS
+  panel.classList.toggle("minimized");
+
+  if (panel.classList.contains("minimized")) {
+    btn.innerHTML = "+";
+  } else {
+    btn.innerHTML = "−";
+  }
+}
+// close table function
+function closeTable() {
+  document.getElementById("result-table").style.display = "none";
+}
+// table function
+function showResultModal() {
+  const modal = document.getElementById("result-table");
+  const tbody = document.getElementById("resultBody");
+  tbody.innerHTML = "";
+
+  nodes.forEach((node) => {
+    const row = document.createElement("tr");
+
+    const bg = channelColors[node.channel];
+    const textColor =
+      node.channel === 5 || node.channel === 11 ? "white" : "black";
+
+    row.innerHTML = `
+            <td><b>${node.label}</b></td>
+            <td><span class="channel-badge" style="background:${bg}; color:${textColor}">Channel ${
+      node.channel
+    }</span></td>
+            <td>${node.totalInterference.toFixed(1)}</td>
+        `;
+    tbody.appendChild(row);
+  });
+
+  modal.style.display = "block";
+  modal.classList.remove("minimized");
+  document.querySelector(".min-btn").innerHTML = "−";
+}
+
+document.getElementById("calculate").addEventListener("click", runDSATUR);
