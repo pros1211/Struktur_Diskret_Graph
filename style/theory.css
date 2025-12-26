@@ -1,0 +1,117 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #222831;
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  font-family: "Plus Jakarta Sans";
+  color: white;
+  display: flex;
+  justify-content: center;
+}
+.wrapper {
+  width: 90%;
+  max-width: 1000px;
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+.tab-container {
+  display: flex;
+  background-color: #15191f;
+  border-radius: 999px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 5px;
+}
+.tab-item {
+  background: transparent;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  color: #94a3b8;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.tab-item:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.tab-item.active {
+  background: linear-gradient(135deg, #ff512f 0%, #f09819 50%, #ff512f 100%);
+  border: none;
+  color: #ffffff;
+}
+.content-area {
+  width: 100%;
+  min-height: 400px;
+  background: rgba(30, 30, 46, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  padding: 40px;
+
+  /* Animasi saat konten muncul */
+  animation: fadeIn 0.5s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+.content-area::after {
+  content: "";
+  position: absolute;
+  bottom: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 87, 34, 0.4) 0%,
+    rgba(0, 0, 0, 0) 70%
+  );
+  filter: blur(40px);
+  z-index: -1;
+}
+.content-area h1 {
+  color: #ffc822;
+  margin-top: 0;
+  font-size: 2.5rem;
+  text-align: center;
+  font-family: "Plus Jakarta Sans";
+}
+
+.content-area p {
+  color: #d1d5db;
+  line-height: 1.7;
+  font-family: "Roboto Slab", serif;
+  font-size: 1.1rem;
+}
+.highlight-box {
+  background: rgba(255, 87, 34, 0.1); /* Oranye transparan */
+  border-left: 4px solid #ff5722;
+  padding: 20px;
+  margin: 20px 20px;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: #ffccbc;
+}
+
+/* Animasi Fade In */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
