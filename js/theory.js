@@ -53,6 +53,25 @@ const theoryData = {
             It works by prioritizing the "most difficult" routers first—those surrounded by many neighbors 
             with different channels already assigned.
         </p>
+        <h3 style="color: #FF5722; margin-top: 25px; font-size: 1.2rem;">How It Works (Step-by-Step)</h3>
+    
+        <ul style="margin-bottom: 20px; line-height: 1.8; list-style: none; padding-left: 0;">
+          <li style="margin-bottom: 15px;">
+            <strong style="color: #FFCCBC;">1. Find the "Loudest" Spot (Saturation):</strong>
+            <br>
+            TThis algorithm searches for the router that is already surrounded by the most <em>different</em> channels. This router is in the "most critical state" because its channel options are nearly exhausted, so it needs to be colored first!
+          </li>
+          <li style="margin-bottom: 15px;">
+            <strong style="color: #FFCCBC;">2. Tie-Breaker (Degree):</strong>
+            <br>
+            If two routers are equally critical, DSATUR picks the one with the most neighbors. Why? Because fixing the "most popular" router stabilizes the largest part of the network.
+          </li>
+          <li>
+            <strong style="color: #FFCCBC;">3. Smart Assignment:</strong>
+            <br>
+            Once a target router is selected, the algorithm doesn't just randomly select a color. It calculates the <strong>Interference Weight</strong> and selects the "quietest" available channel (usually 1, 6, or 11) to minimize overlap.
+          </li>
+        </ul>
         <p>
             This heuristic approach ensures we minimize the total interference in the network efficiently.
         </p>`,
